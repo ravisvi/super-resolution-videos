@@ -75,7 +75,7 @@ def evaluate():
         
         
     writer.close()
-    writer_lr.close()
+    
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
