@@ -63,7 +63,7 @@ def evaluate():
     tl.layers.initialize_global_variables(sess)
     tl.files.load_and_assign_npz(sess=sess, name=checkpoint_dir+'/g_srgan.npz', network=net_g)
     write_video_filepath=os.getcwd()+'\\videos\\football_srgan.mp4'
-    writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps },outputdict={'-r': fps, '-vcodec': 'libx264', '-b': '300000000'})    
+    writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps },outputdict={'-r': fps})    
     for i, frame in enumerate(videogen):        
         avg=frame.max()-frame.min()
         frame = (frame / avg) - 1  
