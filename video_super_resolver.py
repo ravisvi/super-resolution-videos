@@ -6,13 +6,13 @@ from datetime import datetime
 import numpy as np
 from time import localtime, strftime
 import logging, scipy
-
+import skimage
 import tensorflow as tf
 import tensorlayer as tl
 from model import *
 from utils import *
 from config import config, log_config
-import imageio
+import skvideo.io
 ###====================== HYPER-PARAMETERS ===========================###
 ## Adam
 batch_size = config.TRAIN.batch_size
@@ -48,11 +48,13 @@ def evaluate():
     
     read_video_filepath=os.getcwd()+'\\videos\\video_hq.mp4'
     
-    reader = imageio.get_reader(read_video_filepath)
-    W,H=reader.get_meta_data()['size']
-    fps=reader.get_meta_data()['fps']
-    num_frames=reader.get_meta_data()['nframes']
-    print (reader.get_meta_data())
+    videogen = skvideo.io.vreader(read_video_filepath)
+    metadata = skvideo.io.ffprobe(read_video_filepath)
+    metadata=metadata['video']
+    H=int(metadata['@height'])
+    W=int(metadata['@width'])
+    fps=metadata['@r_frame_rate']
+    
     C=3
     t_image = tf.placeholder('float32', [None, H/4, W/4, C], name='input_image')
     net_g = SRGAN_g(t_image, is_train=False, reuse=False)
@@ -61,40 +63,19 @@ def evaluate():
     tl.layers.initialize_global_variables(sess)
     tl.files.load_and_assign_npz(sess=sess, name=checkpoint_dir+'/g_srgan.npz', network=net_g)
     write_video_filepath=os.getcwd()+'\\videos\\srgan.mp4'
-    srgan_writer=imageio.get_writer(write_video_filepath)
-    for i, frame in enumerate(reader):
+    writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps },outputdict={'-r': fps, '-vcodec': 'libx264', '-b': '300000000'})
+    for i, frame in enumerate(videogen):
         resized_frame=scipy.misc.imresize(frame, size=0.25, interp='bilinear', mode=None)
         avg=resized_frame.max()-resized_frame.min()
         resized_frame = (resized_frame / avg) - 1  
         out = sess.run(net_g.outputs, {t_image: [resized_frame]})
         #tl.vis.save_image(out[0], save_dir+'/'+str(i)+'.png')
-        meta={'fps': 29.97}
-        srgan_writer.append_data(out[0], meta=meta)
-    
-    
-    # # ###========================== DEFINE MODEL AND RESTORE G =============================###
-    # print valid_lr_imgs.shape
-    # batch_size=len(valid_lr_imgs)
-    # H,W,C=valid_lr_imgs[0].shape
-    # t_image = tf.placeholder('float32', [None, H, W, C], name='input_image')
-    # net_g = SRGAN_g(t_image, is_train=False, reuse=False)
-    # # ###=============RESTORE G======================================================
-    # sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=False))
-    # tl.layers.initialize_global_variables(sess)
-    # tl.files.load_and_assign_npz(sess=sess, name=checkpoint_dir+'/g_srgan.npz', network=net_g)
-    # # ###==========================EVALUATION============================###
-    # for i in np.arange(batch_size):
-        # input_image=valid_lr_imgs[i]
-        # input_image = (input_image / 127.5) - 1  
-        # out = sess.run(net_g.outputs, {t_image: [input_image]})
-        # tl.vis.save_image(out[0], save_dir+'/'+str(i)+'.png')
-    
+        out=out[0]
+        out=255*(out-np.min(out))/(np.max(out)-np.min(out))
+        writer.writeFrame(out)
         
-    
-    
-    
-    
-
+        
+    writer.close()
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
