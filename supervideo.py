@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+import video_super_resolver as vsr
+
 
 def get_videos():
     directory_path = 'videos'
@@ -28,7 +30,7 @@ if __name__ == '__main__':
     choice = input()
     print('Selected', choice)
 
-    #Call the matlab package and then call the necessary srgan function.
 
+    vsr.evaluate(choice)
 
     # Optional open two vlcs to start at the same time in half windows to show the video. One low res and one hight res.

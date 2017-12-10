@@ -1,18 +1,14 @@
 #! /usr/bin/python
 # -*- coding: utf8 -*-
 
-import os, time, pickle, random, time
-from datetime import datetime
-import numpy as np
-from time import localtime, strftime
-import logging, scipy
 import skimage
 import tensorflow as tf
 import tensorlayer as tl
 from model import *
 from utils import *
-from config import config, log_config
+from config import config
 import skvideo.io
+import argparse
 ###====================== HYPER-PARAMETERS ===========================###
 ## Adam
 batch_size = config.TRAIN.batch_size
@@ -40,13 +36,18 @@ def read_all_imgs(img_list, path='', n_threads=32):
 
 
 
-def evaluate():
+def evaluate(video_path):
     ## create folders to save result images
-    save_dir = "images/srgan_frames/"
+
+    tl.global_flag['mode'] = 'srgan'
+
+    save_dir = os.path.join("images", "srgan_frames")
     tl.files.exists_or_mkdir(save_dir)
     checkpoint_dir = "checkpoint"
+    output_video_name = video_path.split(".")[0]
+    output_video_name += "_srgan."+video_path.split(".")[1]
     
-    read_video_filepath=os.getcwd()+'\\videos\\football_lq.mp4'
+    read_video_filepath=os.path.join(os.getcwd(), "videos", video_path)
     
     videogen = skvideo.io.vreader(read_video_filepath)
     metadata = skvideo.io.ffprobe(read_video_filepath)
@@ -61,8 +62,8 @@ def evaluate():
     # # ###=============RESTORE G======================================================
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=False))
     tl.layers.initialize_global_variables(sess)
-    tl.files.load_and_assign_npz(sess=sess, name=checkpoint_dir+'/g_srgan.npz', network=net_g)
-    write_video_filepath=os.getcwd()+'\\videos\\football_srgan.mp4'
+    tl.files.load_and_assign_npz(sess=sess, name=os.path.join(checkpoint_dir, 'g_srgan.npz'), network=net_g)
+    write_video_filepath=os.path.join(os.getcwd(), 'videos', output_video_name)
     writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps },outputdict={'-r': fps})    
     for i, frame in enumerate(videogen):        
         avg=frame.max()-frame.min()
@@ -75,13 +76,3 @@ def evaluate():
         
         
     writer.close()
-    
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', type=str, default='srgan', help='evaluate')
-    args = parser.parse_args()
-    tl.global_flag['mode'] = args.mode
-    evaluate()
-
-    
