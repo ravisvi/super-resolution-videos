@@ -15,7 +15,7 @@ This files lists the video files present in the videos folder. The repository as
 2. Select the desired video from the list.
 3. Once the operation is successful the video will be present in the same folder with _srgan suffix.
 
-Please contact @ravisvi or @kevinjoseph1995 if you need the trained model. This model contains the L1 loss as well, which helps to better super-resolve a video. 
+Please contact [@ravisvi](https://github.com/ravisvi) or [@kevinjoseph1995](https://github.com/kevinjoseph1995) if you need the trained model. This model contains the L1 loss as well, which helps to better super-resolve a video. 
 
 ### Dependencies
 1. A python environment
