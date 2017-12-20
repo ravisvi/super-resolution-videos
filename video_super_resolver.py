@@ -64,15 +64,17 @@ def evaluate(video_path):
     tl.layers.initialize_global_variables(sess)
     tl.files.load_and_assign_npz(sess=sess, name=os.path.join(checkpoint_dir, 'g_srgan.npz'), network=net_g)
     write_video_filepath=os.path.join(os.getcwd(), 'videos', output_video_name)
-    writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps },outputdict={'-r': fps})    
+    writer = skvideo.io.FFmpegWriter(write_video_filepath,inputdict={'-r': fps},outputdict={'-r': fps,'-vcodec': 'libx264','-pix_fmt': 'yuv420p'})    
     for i, frame in enumerate(videogen):        
         avg=frame.max()-frame.min()
         frame = (frame / avg) - 1  
         out = sess.run(net_g.outputs, {t_image: [frame]})
         #tl.vis.save_image(out[0], save_dir+'/'+str(i)+'.png')
         out=out[0]
-        out=255*(out-np.min(out))/(np.max(out)-np.min(out))
+        out=(255*(out-np.min(out))/(np.max(out)-np.min(out))).astype(np.uint8)
         writer.writeFrame(out)
+        print (i)
+        
         
         
     writer.close()
