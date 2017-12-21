@@ -22,5 +22,5 @@ Please contact [@ravisvi](https://github.com/ravisvi) or [@kevinjoseph1995](http
 2. Working TensorFlow installation
 3. Working TensorLayer installation
 
-* To run the PSNR, you may want to have an environment capable of running matlab files.
+
 
