@@ -1,5 +1,6 @@
 # Super resolve videos
 Applying SRGAN technique implemented in https://github.com/zsdonghao/SRGAN on videos to super resolve them.
+You can find some of our results here- https://www.youtube.com/watch?v=8OY8HFGsbKM
 
 ## Motivation
 One of the state of the art techniques at the time to super resolve an image involves the SRGAN technique as described in the [paper](https://arxiv.org/pdf/1609.04802.pdf). We want to investigate the effects of trying this technique on videos to see if we can super resolve them without major distortions.
