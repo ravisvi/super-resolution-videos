@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tensorlayer as tl
 from tensorlayer.prepro import *
 # from config import config, log_config

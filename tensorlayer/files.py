@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import os
 import numpy as np
 import re
@@ -627,7 +627,7 @@ def load_npz(path='', name='model.npz'):
     #     print('Loading %s, %s' % (key, str(val.shape)))
     # return params
     ## if save_npz save params into a list
-    d = np.load( path+name )
+    d = np.load( path+name, allow_pickle=True )
     # for val in sorted( d.items() ):
     #     params = val
     #     return params

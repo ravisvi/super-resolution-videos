@@ -3,7 +3,7 @@
 
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 def identity(x, name=None):
     """The identity activation function, Shortcut is ``linear``.

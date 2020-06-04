@@ -2,7 +2,11 @@
 # -*- coding: utf8 -*-
 
 import skimage
-import tensorflow as tf
+#import tensorflow.compat.v1 as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior() 
+
+
 import tensorlayer as tl
 from model import *
 from utils import *
