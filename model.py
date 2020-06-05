@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf8 -*-
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tensorlayer as tl
 from tensorlayer.layers import *
 # from tensorflow.python.ops import variable_scope as vs

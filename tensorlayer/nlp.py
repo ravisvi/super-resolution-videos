@@ -4,7 +4,7 @@
 
 
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import os
 from sys import platform as _platform
 import collections
